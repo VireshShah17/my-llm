@@ -1,0 +1,29 @@
+# Python Environments
+venv/
+env/
+.env
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Machine Learning / Model Checkpoints
+checkpoints/
+
+# Datasets and Corpus (Ignore large text files but track the folder)
+data/corpus/*.txt
+data/gpt2/*.json
+data/gpt2/*.bpe
+data/gpt2/*.txt
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo

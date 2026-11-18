@@ -1,9 +1,9 @@
 import pytest
 import torch
 import torch.nn as nn
-from src.attention import (
-    INPUTS,
-    CausalAttention,
+from src.attention.attention import INPUTS
+from src.attention.causal_attention import CausalAttention
+from src.attention.multi_head_attention import (
     MultiHeadAttention,
     MultiHeadAttentionWrapper,
 )
@@ -94,17 +94,17 @@ def test_wrapper_output_is_concatenation_of_head_outputs():
 
 def test_wrapper_heads_have_independent_weights():
     m = make_wrapper(num_heads = 2)
-    assert not torch.allclose(m.heads[0].W_query.weight, m.heads[1].W_query.weight)
-    assert not torch.allclose(m.heads[0].W_value.weight, m.heads[1].W_value.weight)
+    assert not torch.allclose(m.heads[0].W_query.weight, m.heads[1].W_query.weight) # pyright: ignore[reportArgumentType, reportAttributeAccessIssue]
+    assert not torch.allclose(m.heads[0].W_value.weight, m.heads[1].W_value.weight) # pyright: ignore[reportArgumentType, reportAttributeAccessIssue]
 
 
 def test_wrapper_passes_config_to_every_head():
     m = make_wrapper(num_heads = 2, dropout = 0.3, context_length = 8, qkv_bias = True)
 
     for head in m.heads:
-        assert head.dropout.p == 0.3
+        assert head.dropout.p == 0.3 # type: ignore
         assert head.mask.shape == (8, 8)
-        assert head.W_query.bias is not None
+        assert head.W_query.bias is not None # type: ignore
 
 
 def test_wrapper_parameter_count():
@@ -329,9 +329,9 @@ def test_mha_equals_wrapper_when_weights_are_copied_and_out_proj_is_identity(num
     with torch.no_grad():
         for h, head in enumerate(wrapper.heads):
             W_q, W_k, W_v = head_slices(mha, h)
-            head.W_query.weight.copy_(W_q)
-            head.W_key.weight.copy_(W_k)
-            head.W_value.weight.copy_(W_v)
+            head.W_query.weight.copy_(W_q) # type: ignore
+            head.W_key.weight.copy_(W_k) # type: ignore
+            head.W_value.weight.copy_(W_v) # type: ignore
 
     x = make_batch()
     assert wrapper(x).shape == mha(x).shape == (2, T, d_out)
@@ -426,7 +426,7 @@ def test_mha_gradients_flow_to_all_parameters_including_out_proj():
     for name, p in m.named_parameters():
         assert p.grad is not None, f"no gradient for {name}"
         assert torch.isfinite(p.grad).all()
-    assert m.out_proj.weight.grad.abs().sum() > 0
+    assert m.out_proj.weight.grad.abs().sum() > 0 # type: ignore
 
 
 # ---------------------------------------------------------------------------

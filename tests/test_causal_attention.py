@@ -1,7 +1,8 @@
 import pytest
 import torch
 import torch.nn as nn
-from src.attention import (INPUTS, CausalAttention,)
+from src.attention.attention import INPUTS
+from src.attention.causal_attention import CausalAttention
 
 
 D_IN = 3

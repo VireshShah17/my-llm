@@ -1,7 +1,7 @@
 import pytest
 import torch
 import torch.nn as nn
-from src.attention import (
+from src.attention.attention import (
     INPUTS,
     SelfAttention_v1,
     SelfAttention_v2,
